@@ -12,7 +12,7 @@ import {
 } from 'lucide-react';
 
 import { createClient } from '@/lib/supabase/server';
-import ScreenshotGallery from '@/components/screenshots-gallery';
+import ScreenshotGallery from '@/components/screenshot-gallery';
 
 type PageProps = {
   params: Promise<{
