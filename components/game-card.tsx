@@ -2,6 +2,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { ExternalLink } from 'lucide-react';
 
+import TrackedLink from '@/components/tracked-link';
+
 type Category = {
   id: string;
   name: string;
@@ -93,7 +95,13 @@ function getOfficialStoreLink(links?: GameLink[]) {
         score += 50;
       }
 
-      if (label.includes('trailer') || type.includes('trailer') || url.includes('youtube.com') || url.includes('youtu.be') || url.includes('vimeo.com')) {
+      if (
+        label.includes('trailer') ||
+        type.includes('trailer') ||
+        url.includes('youtube.com') ||
+        url.includes('youtu.be') ||
+        url.includes('vimeo.com')
+      ) {
         score -= 100;
       }
 
@@ -212,15 +220,19 @@ export default function GameCard({ game }: GameCardProps) {
           </Link>
 
           {officialLink ? (
-            <a
+            <TrackedLink
               href={officialLink.url}
-              target="_blank"
-              rel="noreferrer"
+              gameId={game.id}
+              linkId={officialLink.id}
+              eventType="card_outbound_click"
+              pathname={`/games/${game.slug}`}
               className="inline-flex items-center gap-2 rounded-xl border border-zinc-200 px-4 py-2 text-sm font-medium text-zinc-700 transition hover:border-zinc-300 hover:bg-zinc-50 hover:text-zinc-950"
             >
-              {officialLabel}
-              <ExternalLink className="h-4 w-4" />
-            </a>
+              <>
+                {officialLabel}
+                <ExternalLink className="h-4 w-4" />
+              </>
+            </TrackedLink>
           ) : (
             <span className="text-sm text-zinc-400">Official link soon</span>
           )}
