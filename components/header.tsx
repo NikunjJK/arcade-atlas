@@ -8,7 +8,7 @@ const nav = [
   { href: '/dmca', label: 'DMCA' }
 ];
 
-export function Header() {
+export default function Header() {
   return (
     <header className="sticky top-0 z-40 border-b border-slate-200/70 bg-white/80 backdrop-blur-xl">
       <div className="container-shell flex h-16 items-center justify-between gap-4">
