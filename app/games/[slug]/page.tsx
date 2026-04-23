@@ -13,6 +13,7 @@ import {
 
 import { createClient } from '@/lib/supabase/server';
 import ScreenshotGallery from '@/components/screenshot-gallery';
+import TrackedLink from '@/components/tracked-link';
 
 type PageProps = {
   params: Promise<{
@@ -81,8 +82,8 @@ function getVimeoEmbedUrl(url: string) {
   }
 }
 
-function getTrailerEmbedUrl(links: LinkRow[]) {
-  const trailerLikeLink =
+function getTrailerLink(links: LinkRow[]) {
+  return (
     links.find((link) => {
       const type = (link.link_type || '').toLowerCase();
       const label = (link.label || '').toLowerCase();
@@ -97,7 +98,12 @@ function getTrailerEmbedUrl(links: LinkRow[]) {
         url.includes('youtu.be') ||
         url.includes('vimeo.com')
       );
-    }) || null;
+    }) || null
+  );
+}
+
+function getTrailerEmbedUrl(links: LinkRow[]) {
+  const trailerLikeLink = getTrailerLink(links);
 
   if (!trailerLikeLink) return null;
 
@@ -107,6 +113,7 @@ function getTrailerEmbedUrl(links: LinkRow[]) {
       embedUrl: youtube,
       sourceUrl: trailerLikeLink.url,
       label: trailerLikeLink.label || 'Watch Trailer',
+      linkId: trailerLikeLink.id,
     };
   }
 
@@ -116,6 +123,7 @@ function getTrailerEmbedUrl(links: LinkRow[]) {
       embedUrl: vimeo,
       sourceUrl: trailerLikeLink.url,
       label: trailerLikeLink.label || 'Watch Trailer',
+      linkId: trailerLikeLink.id,
     };
   }
 
@@ -376,16 +384,20 @@ export default async function GameDetailPage({ params }: PageProps) {
                 {gameLinks && gameLinks.length > 0 && (
                   <div className="mt-6 flex flex-wrap gap-3">
                     {gameLinks.map((link: any) => (
-                      <a
+                      <TrackedLink
                         key={link.id}
                         href={link.url}
-                        target="_blank"
-                        rel="noreferrer"
+                        gameId={game.id}
+                        linkId={link.id}
+                        eventType="detail_outbound_click"
+                        pathname={`/games/${game.slug}`}
                         className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/10"
                       >
-                        {link.label || link.link_type || 'Visit Link'}
-                        <ExternalLink className="h-4 w-4" />
-                      </a>
+                        <>
+                          {link.label || link.link_type || 'Visit Link'}
+                          <ExternalLink className="h-4 w-4" />
+                        </>
+                      </TrackedLink>
                     ))}
                   </div>
                 )}
@@ -461,15 +473,19 @@ export default async function GameDetailPage({ params }: PageProps) {
               <section className="mt-10">
                 <div className="mb-4 flex items-center justify-between">
                   <h2 className="text-xl font-semibold text-white">Trailer</h2>
-                  <a
+                  <TrackedLink
                     href={trailer.sourceUrl}
-                    target="_blank"
-                    rel="noreferrer"
+                    gameId={game.id}
+                    linkId={trailer.linkId}
+                    eventType="trailer_click"
+                    pathname={`/games/${game.slug}`}
                     className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm font-medium text-white transition hover:bg-white/10"
                   >
-                    {trailer.label}
-                    <ExternalLink className="h-4 w-4" />
-                  </a>
+                    <>
+                      {trailer.label}
+                      <ExternalLink className="h-4 w-4" />
+                    </>
+                  </TrackedLink>
                 </div>
 
                 <div className="overflow-hidden rounded-2xl border border-white/10 bg-zinc-900/60 p-3 shadow-xl">
@@ -560,16 +576,20 @@ export default async function GameDetailPage({ params }: PageProps) {
 
                     <div className="space-y-3">
                       {gameLinks.map((link: any) => (
-                        <a
+                        <TrackedLink
                           key={link.id}
                           href={link.url}
-                          target="_blank"
-                          rel="noreferrer"
+                          gameId={game.id}
+                          linkId={link.id}
+                          eventType="sidebar_outbound_click"
+                          pathname={`/games/${game.slug}`}
                           className="flex items-center justify-between rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-zinc-200 transition hover:bg-white/10"
                         >
-                          <span>{link.label || link.link_type || 'Visit Link'}</span>
-                          <ExternalLink className="h-4 w-4 text-zinc-400" />
-                        </a>
+                          <>
+                            <span>{link.label || link.link_type || 'Visit Link'}</span>
+                            <ExternalLink className="h-4 w-4 text-zinc-400" />
+                          </>
+                        </TrackedLink>
                       ))}
                     </div>
                   </div>
