@@ -1,57 +1,88 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
+import { Mail, Shield, Briefcase } from 'lucide-react';
 
-export function Footer() {
+export const metadata: Metadata = {
+  title: 'Contact | Arcade Atlas',
+  description:
+    'Get in touch with Arcade Atlas for feedback, corrections, business inquiries, or support.',
+};
+
+export default function ContactPage() {
   return (
-    <footer className="mt-24 border-t border-slate-200 bg-white">
-      <div className="container-shell grid gap-12 py-14 md:grid-cols-[1.4fr,1fr,1fr,1fr]">
-        <div>
-          <h3 className="text-lg font-semibold text-slate-950">Arcade Atlas</h3>
-          <p className="mt-3 max-w-md text-sm leading-6 text-slate-600">
-            A curated game directory built around official and authorized links only. No torrents, no cracked files, no shady redirects.
+    <main className="min-h-screen bg-[#f5f7fb]">
+      <section className="mx-auto max-w-5xl px-4 py-12 md:px-6 lg:px-8">
+        <Link
+          href="/"
+          className="mb-6 inline-flex text-sm font-medium text-[#5b6b86] transition hover:text-[#071133]"
+        >
+          ← Back to Home
+        </Link>
+
+        <div className="rounded-[32px] border border-black/5 bg-white p-8 shadow-sm md:p-10">
+          <h1 className="text-4xl font-semibold tracking-tight text-[#071133] md:text-5xl">
+            Contact Arcade Atlas
+          </h1>
+
+          <p className="mt-4 max-w-3xl text-lg leading-8 text-[#53627c]">
+            Use this page for corrections, feedback, business inquiries, or requests
+            related to game listings and official links.
           </p>
-        </div>
-        <FooterColumn
-          title="Browse"
-          links={[
-            ['All categories', '/browse'],
-            ['Trending', '/browse?sort=trending'],
-            ['New arrivals', '/browse?sort=newest']
-          ]}
-        />
-        <FooterColumn
-          title="Company"
-          links={[
-            ['About', '/about'],
-            ['Contact', '/contact'],
-            ['DMCA', '/dmca']
-          ]}
-        />
-        <FooterColumn
-          title="Legal"
-          links={[
-            ['Privacy Policy', '/privacy'],
-            ['Terms of Service', '/terms'],
-            ['Content Removal', '/dmca']
-          ]}
-        />
-      </div>
-    </footer>
-  );
-}
 
-function FooterColumn({ title, links }: { title: string; links: [string, string][] }) {
-  return (
-    <div>
-      <h4 className="text-sm font-semibold text-slate-950">{title}</h4>
-      <ul className="mt-4 space-y-3 text-sm text-slate-600">
-        {links.map(([label, href]) => (
-          <li key={href}>
-            <Link className="transition hover:text-slate-950" href={href}>
-              {label}
-            </Link>
-          </li>
-        ))}
-      </ul>
-    </div>
+          <div className="mt-10 grid gap-6 md:grid-cols-3">
+            <div className="rounded-[24px] border border-[#d8dfeb] bg-[#f8faff] p-6">
+              <Mail className="h-6 w-6 text-[#071133]" />
+              <h2 className="mt-4 text-xl font-semibold text-[#071133]">
+                General Contact
+              </h2>
+              <p className="mt-3 text-sm leading-7 text-[#53627c]">
+                For general questions, site feedback, or suggestions, contact:
+              </p>
+              <p className="mt-4 text-sm font-medium text-[#071133]">
+                contact@arcadeatlas.example
+              </p>
+            </div>
+
+            <div className="rounded-[24px] border border-[#d8dfeb] bg-[#f8faff] p-6">
+              <Shield className="h-6 w-6 text-[#071133]" />
+              <h2 className="mt-4 text-xl font-semibold text-[#071133]">
+                Content Corrections
+              </h2>
+              <p className="mt-3 text-sm leading-7 text-[#53627c]">
+                If a game page has a broken official link, incorrect media, or wrong
+                metadata, report it here:
+              </p>
+              <p className="mt-4 text-sm font-medium text-[#071133]">
+                corrections@arcadeatlas.example
+              </p>
+            </div>
+
+            <div className="rounded-[24px] border border-[#d8dfeb] bg-[#f8faff] p-6">
+              <Briefcase className="h-6 w-6 text-[#071133]" />
+              <h2 className="mt-4 text-xl font-semibold text-[#071133]">
+                Business Inquiries
+              </h2>
+              <p className="mt-3 text-sm leading-7 text-[#53627c]">
+                For partnerships, sponsorships, listings, or collaboration:
+              </p>
+              <p className="mt-4 text-sm font-medium text-[#071133]">
+                business@arcadeatlas.example
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-10 rounded-[24px] border border-[#d8dfeb] bg-white p-6">
+            <h2 className="text-2xl font-semibold text-[#071133]">
+              Before you contact us
+            </h2>
+            <ul className="mt-4 space-y-3 text-[#53627c]">
+              <li>• Include the game title and page URL if reporting a listing issue.</li>
+              <li>• Mention the exact link or media asset that appears incorrect.</li>
+              <li>• For partnership requests, include your company or project details.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+    </main>
   );
 }
