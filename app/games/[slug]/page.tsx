@@ -273,7 +273,8 @@ export default async function GameDetailPage({ params }: PageProps) {
 
   const trailer = getTrailerEmbedUrl(gameLinks);
 
-  const jsonLd = {
+  const structuredData = [
+  {
     '@context': 'https://schema.org',
     '@type': 'VideoGame',
     name: game.title,
@@ -305,14 +306,39 @@ export default async function GameDetailPage({ params }: PageProps) {
           name: game.publisher,
         }
       : undefined,
-  };
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Home',
+        item: 'https://arcadeatlas.games',
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'Browse',
+        item: 'https://arcadeatlas.games/browse',
+      },
+      {
+        '@type': 'ListItem',
+        position: 3,
+        name: game.title,
+        item: `https://arcadeatlas.games/games/${game.slug}`,
+      },
+    ],
+  },
+];
 
   return (
     <main className="min-h-screen bg-zinc-950 text-white">
       <script
   type="application/ld+json"
   dangerouslySetInnerHTML={{
-    __html: JSON.stringify(jsonLd),
+    __html: JSON.stringify(structuredData),
   }}
   />
 
