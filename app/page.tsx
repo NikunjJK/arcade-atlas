@@ -121,7 +121,10 @@ export default async function HomePage() {
                 listings, or licensed downloads.
               </p>
 
-              <form action="/browse" className="mt-8 flex max-w-3xl items-center gap-3 rounded-full bg-white p-3 shadow-sm ring-1 ring-black/5">
+              <form
+                action="/browse"
+                className="mt-8 flex max-w-3xl items-center gap-3 rounded-full bg-white p-3 shadow-sm ring-1 ring-black/5"
+              >
                 <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#f1f4f9] text-[#7c8aa5]">
                   <Search className="h-5 w-5" />
                 </div>
@@ -167,26 +170,63 @@ export default async function HomePage() {
 
       <section className="mx-auto max-w-7xl px-4 py-14 md:px-6 lg:px-8">
         <SectionHeader
-          title="Featured categories"
-          description="Structured, expandable categories that keep discovery clean as your catalog grows."
-          href="/browse"
-          cta="Browse all"
+          title="Browse by category"
+          description="Explore curated game categories with dedicated SEO-friendly pages and official links."
+          href="/categories"
+          cta="View all categories"
         />
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {categories.map((category) => (
             <Link
               key={category.id}
-              href={`/browse?category=${category.slug}`}
+              href={`/categories/${category.slug}`}
               className="rounded-[24px] border border-[#d8dfeb] bg-white p-6 transition hover:-translate-y-0.5 hover:shadow-md"
             >
-              <div className="text-xl font-semibold text-[#071133]">{category.name}</div>
-              <div className="mt-3 inline-flex items-center gap-2 text-sm font-medium text-[#5b6b86]">
-                Explore category
+              <div className="text-xl font-semibold text-[#071133]">
+                {category.name}
+              </div>
+
+              <p className="mt-3 text-sm leading-6 text-[#53627c]">
+                Discover curated {category.name} games with screenshots, trailers,
+                platforms, and trusted official links.
+              </p>
+
+              <div className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-[#5b6b86]">
+                Explore {category.name}
                 <ArrowRight className="h-4 w-4" />
               </div>
             </Link>
           ))}
+        </div>
+
+        <div className="mt-8 rounded-[28px] border border-[#d8dfeb] bg-white p-6 shadow-sm">
+          <h3 className="text-2xl font-semibold tracking-tight text-[#071133]">
+            Find games by genre, platform, and play style
+          </h3>
+
+          <p className="mt-3 max-w-4xl text-base leading-7 text-[#53627c]">
+            Arcade Atlas organizes games into clean discovery paths so players can
+            quickly find action games, indie titles, browser games, horror games,
+            roguelikes, cozy games, free-to-play games, and more without relying on
+            unsafe download links.
+          </p>
+
+          <div className="mt-5 flex flex-wrap gap-3">
+            <Link
+              href="/browse"
+              className="rounded-full bg-[#071133] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#0e1b47]"
+            >
+              Browse full catalog
+            </Link>
+
+            <Link
+              href="/categories"
+              className="rounded-full border border-[#d7dfea] bg-white px-5 py-3 text-sm font-semibold text-[#53627c] transition hover:border-[#aab7cc] hover:text-[#071133]"
+            >
+              All categories
+            </Link>
+          </div>
         </div>
       </section>
 
