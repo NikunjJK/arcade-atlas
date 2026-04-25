@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
+import Script from 'next/script';
 import { notFound } from 'next/navigation';
 import {
   CalendarDays,
@@ -206,21 +207,21 @@ export async function generateMetadata({
   const description =
     game.short_description ||
     game.long_description ||
-    `Explore screenshots, platforms, links, and release details for ${game.title} on Arcade Atlas.`;
+    `Explore screenshots, platforms, official links, trailers, and release details for ${game.title} on Arcade Atlas.`;
 
   const image =
     game.banner_image || game.thumbnail || screenshots[0]?.image_url || null;
 
   return {
-    title: `${game.title} | Arcade Atlas`,
+    title: `${game.title} - Screenshots, Trailer, Platforms & Official Links | Arcade Atlas`,
     description,
     alternates: {
-      canonical: `/games/${game.slug}`,
+      canonical: `https://arcadeatlas.games/games/${game.slug}`,
     },
     openGraph: {
       title: `${game.title} | Arcade Atlas`,
       description,
-      url: `/games/${game.slug}`,
+      url: `https://arcadeatlas.games/games/${game.slug}`,
       siteName: 'Arcade Atlas',
       type: 'website',
       images: image
@@ -262,9 +263,7 @@ export default async function GameDetailPage({ params }: PageProps) {
       .filter(Boolean) ?? [];
 
   const tags =
-    game.game_tags
-      ?.map((item: any) => item.tags)
-      .filter(Boolean) ?? [];
+    game.game_tags?.map((item: any) => item.tags).filter(Boolean) ?? [];
 
   const badgeList = [
     game.featured ? 'Featured' : null,
@@ -275,8 +274,51 @@ export default async function GameDetailPage({ params }: PageProps) {
 
   const trailer = getTrailerEmbedUrl(gameLinks);
 
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'VideoGame',
+    name: game.title,
+    description:
+      game.short_description ||
+      game.long_description ||
+      `Explore ${game.title} on Arcade Atlas.`,
+    image: [
+      game.thumbnail,
+      game.banner_image,
+      screenshots?.[0]?.image_url,
+    ].filter(Boolean),
+    url: `https://arcadeatlas.games/games/${game.slug}`,
+    datePublished: game.release_date || undefined,
+    applicationCategory: 'Game',
+    operatingSystem:
+      platforms.map((platform: any) => platform.name).join(', ') || undefined,
+    genre: categories.map((category: any) => category.name).filter(Boolean),
+    keywords: tags.map((tag: any) => tag.name).filter(Boolean).join(', '),
+    author: game.developer
+      ? {
+          '@type': 'Organization',
+          name: game.developer,
+        }
+      : undefined,
+    publisher: game.publisher
+      ? {
+          '@type': 'Organization',
+          name: game.publisher,
+        }
+      : undefined,
+  };
+
   return (
     <main className="min-h-screen bg-zinc-950 text-white">
+      <Script
+        id={`game-json-ld-${game.slug}`}
+        type="application/ld+json"
+        strategy="beforeInteractive"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(jsonLd),
+        }}
+      />
+
       <div className="mx-auto max-w-7xl px-4 py-8 md:px-6 lg:px-8">
         <div className="overflow-hidden rounded-3xl border border-white/10 bg-zinc-900/60 shadow-2xl">
           {game.banner_image ? (
@@ -515,7 +557,9 @@ export default async function GameDetailPage({ params }: PageProps) {
 
             <div className="mt-10 grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px]">
               <div className="rounded-2xl border border-white/10 bg-zinc-900/60 p-6 shadow-xl">
-                <h2 className="mb-4 text-2xl font-semibold text-white">About This Game</h2>
+                <h2 className="mb-4 text-2xl font-semibold text-white">
+                  About This Game
+                </h2>
                 {game.long_description ? (
                   <div className="prose prose-invert max-w-none prose-p:text-zinc-300 prose-li:text-zinc-300">
                     <p className="whitespace-pre-line leading-8 text-zinc-300">
@@ -523,13 +567,17 @@ export default async function GameDetailPage({ params }: PageProps) {
                     </p>
                   </div>
                 ) : (
-                  <p className="text-zinc-400">No detailed description available yet.</p>
+                  <p className="text-zinc-400">
+                    No detailed description available yet.
+                  </p>
                 )}
               </div>
 
               <aside className="space-y-6">
                 <div className="rounded-2xl border border-white/10 bg-zinc-900/60 p-6 shadow-xl">
-                  <h3 className="mb-4 text-lg font-semibold text-white">Game Info</h3>
+                  <h3 className="mb-4 text-lg font-semibold text-white">
+                    Game Info
+                  </h3>
 
                   <div className="space-y-4 text-sm">
                     <div>
@@ -539,12 +587,16 @@ export default async function GameDetailPage({ params }: PageProps) {
 
                     <div>
                       <div className="text-zinc-500">Developer</div>
-                      <div className="mt-1 text-zinc-200">{game.developer || 'Unknown'}</div>
+                      <div className="mt-1 text-zinc-200">
+                        {game.developer || 'Unknown'}
+                      </div>
                     </div>
 
                     <div>
                       <div className="text-zinc-500">Publisher</div>
-                      <div className="mt-1 text-zinc-200">{game.publisher || 'Unknown'}</div>
+                      <div className="mt-1 text-zinc-200">
+                        {game.publisher || 'Unknown'}
+                      </div>
                     </div>
 
                     <div>
@@ -572,7 +624,9 @@ export default async function GameDetailPage({ params }: PageProps) {
 
                 {gameLinks && gameLinks.length > 0 && (
                   <div className="rounded-2xl border border-white/10 bg-zinc-900/60 p-6 shadow-xl">
-                    <h3 className="mb-4 text-lg font-semibold text-white">Official Links</h3>
+                    <h3 className="mb-4 text-lg font-semibold text-white">
+                      Official Links
+                    </h3>
 
                     <div className="space-y-3">
                       {gameLinks.map((link: any) => (
