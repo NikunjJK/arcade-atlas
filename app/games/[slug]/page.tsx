@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
-import Script from 'next/script';
 import { notFound } from 'next/navigation';
 import {
   CalendarDays,
@@ -310,14 +309,12 @@ export default async function GameDetailPage({ params }: PageProps) {
 
   return (
     <main className="min-h-screen bg-zinc-950 text-white">
-      <Script
-        id={`game-json-ld-${game.slug}`}
-        type="application/ld+json"
-        strategy="beforeInteractive"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(jsonLd),
-        }}
-      />
+      <script
+  type="application/ld+json"
+  dangerouslySetInnerHTML={{
+    __html: JSON.stringify(jsonLd),
+  }}
+  />
 
       <div className="mx-auto max-w-7xl px-4 py-8 md:px-6 lg:px-8">
         <div className="overflow-hidden rounded-3xl border border-white/10 bg-zinc-900/60 shadow-2xl">
