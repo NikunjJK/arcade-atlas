@@ -39,7 +39,7 @@ export default function ContactPage() {
                 For general questions, site feedback, or suggestions, contact:
               </p>
               <p className="mt-4 text-sm font-medium text-[#071133]">
-                contact@arcadeatlas.example
+                team.arcadeatlas@gmail.com
               </p>
             </div>
 
@@ -53,7 +53,7 @@ export default function ContactPage() {
                 metadata, report it here:
               </p>
               <p className="mt-4 text-sm font-medium text-[#071133]">
-                corrections@arcadeatlas.example
+                team.arcadeatlas@gmail.com
               </p>
             </div>
 
@@ -66,7 +66,7 @@ export default function ContactPage() {
                 For partnerships, sponsorships, listings, or collaboration:
               </p>
               <p className="mt-4 text-sm font-medium text-[#071133]">
-                business@arcadeatlas.example
+                team.arcadeatlas@gmail.com
               </p>
             </div>
           </div>
