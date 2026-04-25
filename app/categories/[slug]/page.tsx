@@ -1,63 +1,117 @@
-import Link from 'next/link';
+import { createClient } from '@/lib/supabase/server';
 import { notFound } from 'next/navigation';
+import Link from 'next/link';
+import Image from 'next/image';
+import type { Metadata } from 'next';
 
-import GameCard from '@/components/game-card';
-import { getCategories, getGames } from '@/lib/db';
-
-type PageProps = {
-  params: Promise<{
+type Props = {
+  params: {
     slug: string;
-  }>;
+  };
 };
 
-export default async function CategoryPage({ params }: PageProps) {
-  const { slug } = await params;
+async function getCategoryData(slug: string) {
+  const supabase = await createClient();
 
-  const [categories, games] = await Promise.all([getCategories(), getGames()]);
+  const { data: category } = await supabase
+    .from('categories')
+    .select('*')
+    .eq('slug', slug)
+    .single();
 
-  const category = categories.find((item) => item.slug === slug);
+  if (!category) return null;
 
-  if (!category) {
+  const { data: games } = await supabase
+    .from('game_categories')
+    .select(`
+      games (
+        id,
+        title,
+        slug,
+        thumbnail,
+        short_description
+      )
+    `)
+    .eq('category_id', category.id);
+
+  return {
+    category,
+    games: games?.map((g: any) => g.games).filter(Boolean) || [],
+  };
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const data = await getCategoryData(params.slug);
+
+  if (!data) {
+    return {
+      title: 'Category Not Found',
+    };
+  }
+
+  return {
+    title: `${data.category.name} Games - Browse & Discover | Arcade Atlas`,
+    description: `Browse the best ${data.category.name} games. Discover new and trending titles on Arcade Atlas.`,
+  };
+}
+
+export default async function CategoryPage({ params }: Props) {
+  const data = await getCategoryData(params.slug);
+
+  if (!data) {
     notFound();
   }
 
-  const categoryGames = games.filter((game) =>
-    (game.categories ?? []).some((item) => item.slug === slug)
-  );
-
   return (
-    <main className="min-h-screen bg-[#f5f7fb]">
-      <section className="mx-auto max-w-7xl px-4 py-12 md:px-6 lg:px-8">
-        <div className="mb-8">
-          <Link
-            href="/browse"
-            className="text-sm font-medium text-[#5b6b86] transition hover:text-[#071133]"
-          >
-            ← Back to Browse
-          </Link>
+    <main className="min-h-screen bg-zinc-950 text-white">
+      <div className="max-w-7xl mx-auto px-4 py-10">
 
-          <h1 className="mt-4 text-4xl font-semibold tracking-tight text-[#071133] md:text-5xl">
-            {category.name}
-          </h1>
+        <h1 className="text-4xl font-bold mb-4">
+          {data.category.name} Games
+        </h1>
 
-          <p className="mt-4 max-w-3xl text-lg text-[#53627c]">
-            Explore all games currently listed in the <strong>{category.name}</strong>{' '}
-            category on Arcade Atlas.
-          </p>
-        </div>
+        <p className="text-zinc-400 mb-8">
+          Discover the best {data.category.name} games available right now.
+        </p>
 
-        {categoryGames.length > 0 ? (
-          <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-            {categoryGames.map((game) => (
-              <GameCard key={game.id} game={game} />
+        {data.games.length === 0 ? (
+          <p>No games found in this category.</p>
+        ) : (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            {data.games.map((game: any) => (
+              <Link
+                key={game.id}
+                href={`/games/${game.slug}`}
+                className="group"
+              >
+                <div className="rounded-xl overflow-hidden border border-zinc-800 bg-zinc-900 hover:bg-zinc-800 transition">
+
+                  <div className="relative aspect-[3/4]">
+                    {game.thumbnail && (
+                      <Image
+                        src={game.thumbnail}
+                        alt={game.title}
+                        fill
+                        className="object-cover group-hover:scale-105 transition"
+                      />
+                    )}
+                  </div>
+
+                  <div className="p-3">
+                    <h3 className="text-sm font-semibold line-clamp-1">
+                      {game.title}
+                    </h3>
+                    <p className="text-xs text-zinc-400 line-clamp-2">
+                      {game.short_description}
+                    </p>
+                  </div>
+
+                </div>
+              </Link>
             ))}
           </div>
-        ) : (
-          <div className="rounded-[28px] bg-white p-8 text-[#6c7a96] shadow-sm ring-1 ring-black/5">
-            No games found in this category yet.
-          </div>
         )}
-      </section>
+      </div>
     </main>
   );
 }
